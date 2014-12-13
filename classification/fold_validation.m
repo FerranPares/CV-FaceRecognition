@@ -1,4 +1,4 @@
-function [error, FP, FN, TP, TN] = fold_validation(features, labels, subjects, NFolds)
+function [error, FP, FN, TP, TN] = fold_validation(features, labels, subjects, NFolds, k)
 % FOLD VALIDATION: compute the classification rates of validation after
 %classification.
 % Inputs:
@@ -20,6 +20,8 @@ Ntest = floor(Nsubjects/NFolds);
 p=randperm(Nsubjects);
 id_subjects=id_subjects(p);
 
+
+
 %% Loop of NFolds 
 for i = 1:NFolds
     
@@ -39,7 +41,7 @@ for i = 1:NFolds
   
     % Load Training Set     
     TrainSet = features(:,find(index ~= 1)');
-    TrainLabels=labels(:,find(index ~= 1)');
+    TrainLabels = labels(:,find(index ~= 1)');
 
     % Load Test Set
     TestSet  = features(:,find(index == 1)');
@@ -72,9 +74,9 @@ for i = 1:NFolds
    
     % Train a k-nn classifier and test the test samples using knnclassify.m
     % 10. To complete:
-    mdl = ClassificationKNN.fit(double(T_TrainSet),TrainLabels','NumNeighbors',5);
+    mdl = ClassificationKNN.fit(double(T_TrainSet),TrainLabels','NumNeighbors',k);
     Result_labels = predict(mdl,double(T_TestSet));
-    Result_labels = uint8(Result_labels);
+    Result_labels = uint8(Result_labels');
         
     % Compute the classification rates
     thrs=0;
